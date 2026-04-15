@@ -255,6 +255,10 @@ __pycache__/
 .idea/
 *.swp
 
+# Claude Code (персональные настройки и память)
+.claude/settings.local.json
+docs/memory/
+
 # Logs
 logs/
 *.log
