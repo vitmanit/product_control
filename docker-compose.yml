@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   api:
     build:
@@ -17,16 +15,7 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/production_control
-      - DATABASE_SYNC_URL=postgresql://postgres:postgres@postgres:5432/production_control
-      - REDIS_URL=redis://redis:6379
-      - CELERY_BROKER_URL=amqp://admin:admin@rabbitmq:5672//
-      - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin
-      - MINIO_SECURE=false
-      - SECRET_KEY=production-secret-key-change-me
+    env_file: .env.docker
     volumes:
       - ./src:/app/src
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
@@ -98,16 +87,7 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/production_control
-      - DATABASE_SYNC_URL=postgresql://postgres:postgres@postgres:5432/production_control
-      - REDIS_URL=redis://redis:6379
-      - CELERY_BROKER_URL=amqp://admin:admin@rabbitmq:5672//
-      - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin
-      - MINIO_SECURE=false
-      - SECRET_KEY=production-secret-key-change-me
+    env_file: .env.docker
     volumes:
       - ./src:/app/src
     command: celery -A src.celery_app worker --loglevel=info --concurrency=4
@@ -122,16 +102,7 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/production_control
-      - DATABASE_SYNC_URL=postgresql://postgres:postgres@postgres:5432/production_control
-      - REDIS_URL=redis://redis:6379
-      - CELERY_BROKER_URL=amqp://admin:admin@rabbitmq:5672//
-      - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin
-      - MINIO_SECURE=false
-      - SECRET_KEY=production-secret-key-change-me
+    env_file: .env.docker
     volumes:
       - ./src:/app/src
     command: celery -A src.celery_app beat --loglevel=info
@@ -147,16 +118,7 @@ services:
       - celery_worker
       - redis
       - rabbitmq
-    environment:
-      - CELERY_BROKER_URL=amqp://admin:admin@rabbitmq:5672//
-      - REDIS_URL=redis://redis:6379
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/production_control
-      - DATABASE_SYNC_URL=postgresql://postgres:postgres@postgres:5432/production_control
-      - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin
-      - MINIO_SECURE=false
-      - SECRET_KEY=production-secret-key-change-me
+    env_file: .env.docker
     command: celery -A src.celery_app flower --port=5555
 
   minio:

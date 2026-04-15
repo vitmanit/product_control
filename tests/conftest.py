@@ -6,9 +6,9 @@ import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
-from src.core.database import Base, get_db
+from src.core.database import Base
 from src.core.cache import RedisCache
-from src.core.dependencies import get_cache
+from src.core.dependencies import get_db, get_cache
 from src.main import app
 
 
