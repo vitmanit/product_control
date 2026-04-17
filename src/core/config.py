@@ -122,6 +122,8 @@ class Settings(BaseSettings):
     )
     rate_limit_requests: int = Field(default=100, alias="RATE_LIMIT_REQUESTS")
     rate_limit_period: int = Field(default=60, alias="RATE_LIMIT_PERIOD")  # секунд
+    rate_limit_enabled: bool = Field(default=True, alias="RATE_LIMIT_ENABLED")
+    rate_limit_storage_uri: str = Field(default="memory://", alias="RATE_LIMIT_STORAGE_URI")
 
 
 # Создаём глобальный экземпляр настроек

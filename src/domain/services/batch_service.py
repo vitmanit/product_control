@@ -3,6 +3,7 @@ from typing import Sequence
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm.attributes import set_committed_value
 
 from src.core.cache import RedisCache
 from src.core.exceptions import NotFoundError, ConflictError
@@ -57,6 +58,9 @@ class BatchService:
                 shift_start=item.shift_start,
                 shift_end=item.shift_end,
             )
+            # новая партия — продуктов нет; помечаем relationship как загруженный,
+            # чтобы асинхронная сериализация не триггерила lazy SELECT
+            set_committed_value(batch, "products", [])
             created.append(batch)
 
         await self._invalidate_list_cache()
@@ -87,7 +91,8 @@ class BatchService:
 
         batch = await self.repo.update(batch, **update_data)
         await self._invalidate_batch_cache(batch_id)
-        return batch
+        # перезагружаем с products, чтобы сериализация не триггерила lazy-load
+        return await self.repo.get_with_products(batch_id)
 
     async def list_batches(
         self,
